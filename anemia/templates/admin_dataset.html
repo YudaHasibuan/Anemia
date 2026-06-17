@@ -5,25 +5,53 @@
 {% block content %}
 <div style="margin-bottom: 25px;">
     <h2 style="margin-bottom: 5px;">Dataset</h2>
-    <p class="text-muted" style="margin-bottom: 0;">Lihat daftar sampel citra konjungtiva mata yang digunakan untuk melatih model YOLOv11.</p>
+    <p class="text-muted" style="margin-bottom: 0;">Kelola dan unggah sampel citra konjungtiva mata untuk dataset latih YOLOv11.</p>
 </div>
 
-<div class="card" style="border-radius: 12px; padding: 25px;">
-    <h3 style="margin-bottom: 20px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; color: #2e384d;">
-        Galeri Citra Latih (Dataset Medis)
+<!-- Upload New Image Card -->
+<div class="card" style="border-radius: 12px; padding: 25px; margin-bottom: 30px;">
+    <h3 style="margin-bottom: 15px; color: #2e384d; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
+        Unggah Citra Dataset Baru
     </h3>
-    
-    <div class="dataset-gallery">
-        {% for img in images %}
-        <div class="dataset-card">
-            <div class="dataset-image-container">
-                <img src="/static/images/dataset/{{ img }}" alt="Conjunctiva Sample">
-            </div>
-            <div class="dataset-card-meta" title="{{ img }}">
-                {{ img }}
-            </div>
+    <form action="/admin/dataset" method="POST" enctype="multipart/form-data" style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
+        <div style="flex: 1; min-width: 250px;">
+            <input type="file" name="file" accept="image/*" class="form-control" required style="padding: 10px; border-radius: 8px;">
         </div>
-        {% endfor %}
+        <button type="submit" class="btn btn-primary" style="padding: 12px 24px; border-radius: 8px;">
+            📤 Unggah Gambar
+        </button>
+    </form>
+    <div style="margin-top: 10px; font-size: 0.8rem; color: var(--text-muted);">
+        * Mendukung format citra JPG, JPEG, PNG, dan WEBP. Citra yang diunggah akan otomatis masuk ke folder pelatihan.
     </div>
+</div>
+
+<!-- Dataset Gallery -->
+<div class="card" style="border-radius: 12px; padding: 25px;">
+    <h3 style="margin-bottom: 5px; color: #2e384d;">Tampilan Gallery Dataset</h3>
+    <p class="text-muted" style="font-size: 0.85rem; margin-bottom: 20px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
+        Dataset terdeteksi ({{ total_images }} gambar) {% if total_images > 40 %} - Menampilkan 40 gambar pertama{% endif %}
+    </p>
+    
+    {% if images %}
+        <div class="dataset-gallery">
+            {% for img in images %}
+            <div class="dataset-card">
+                <div class="dataset-image-container">
+                    <img src="/static/images/dataset/{{ img }}" alt="Conjunctiva Sample">
+                </div>
+                <div class="dataset-card-meta" title="{{ img }}">
+                    {{ img }}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div style="text-align: center; padding: 40px 20px; color: var(--text-muted);">
+            <div style="font-size: 3rem; margin-bottom: 15px;">📁</div>
+            <h4>Belum ada gambar di folder dataset</h4>
+            <p style="font-size: 0.85rem;">Unggah gambar melalui form di atas atau salin gambar langsung ke folder <code>anemia/static/images/dataset/</code> di komputer Anda.</p>
+        </div>
+    {% endif %}
 </div>
 {% endblock %}

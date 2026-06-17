@@ -199,20 +199,36 @@ def logout():
 def admin_dashboard():
     return render_template('admin_dashboard.html', active_page='dashboard')
 
-@app.route('/admin/dataset')
+@app.route('/admin/dataset', methods=['GET', 'POST'])
 @login_required
 def admin_dataset():
-    dataset_images = [
-        "017df65b-IMG_20241224_094520.jpg",
-        "01a17c48-IMG_20241224_093310.jpg",
-        "020339c2-IMG_20241224_103340.jpg",
-        "022e25f5-IMG_20241224_093115.jpg",
-        "025ff11b-IMG_20241224_110545.jpg",
-        "028c11aa-IMG_20241224_092030.jpg",
-        "030d99ba-IMG_20241224_101215.jpg",
-        "032b44ef-IMG_20241224_094000.jpg"
-    ]
-    return render_template('admin_dataset.html', active_page='dataset', images=dataset_images)
+    dataset_dir = os.path.join(app.root_path, 'static', 'images', 'dataset')
+    os.makedirs(dataset_dir, exist_ok=True)
+    
+    # Menangani unggahan file baru ke dataset
+    if request.method == 'POST':
+        if 'file' in request.files:
+            file = request.files['file']
+            if file.filename != '':
+                # Ambil nama file dan simpan ke folder dataset
+                filename = file.filename
+                file.save(os.path.join(dataset_dir, filename))
+                flash(f'Gambar {filename} berhasil ditambahkan ke dataset!', 'success')
+                return redirect(url_for('admin_dataset'))
+                
+    # Memindai file gambar secara dinamis dari folder dataset
+    valid_extensions = ('.jpg', '.jpeg', '.png', '.webp')
+    try:
+        all_files = os.listdir(dataset_dir)
+        dataset_images = [f for f in all_files if f.lower().endswith(valid_extensions)]
+    except Exception:
+        dataset_images = []
+        
+    total_images = len(dataset_images)
+    # Tampilkan max 40 gambar pertama di halaman agar tidak lag
+    display_images = sorted(dataset_images)[:40]
+    
+    return render_template('admin_dataset.html', active_page='dataset', images=display_images, total_images=total_images)
 
 @app.route('/admin/history')
 @login_required
