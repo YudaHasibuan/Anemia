@@ -1,0 +1,83 @@
+{% extends "admin_layout.html" %}
+
+{% block title %}Dashboard - YOLOv11 Anemia{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 25px;">
+    <h2 style="margin-bottom: 5px;">Selamat Datang Kembali, admin!</h2>
+    <p class="text-muted" style="margin-bottom: 0;">Berikut adalah ringkasan sistem deteksi potensi anemia Anda.</p>
+</div>
+
+<!-- Stat Cards -->
+<div class="stat-card-grid">
+    <div class="stat-card">
+        <div class="stat-card-info">
+            <div class="stat-card-number">450</div>
+            <div class="stat-card-label">Total Dataset</div>
+        </div>
+        <div class="stat-card-icon stat-icon-blue">💾</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-card-info">
+            <div class="stat-card-number">315</div>
+            <div class="stat-card-label">Data Training</div>
+        </div>
+        <div class="stat-card-icon stat-icon-green">📊</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-card-info">
+            <div class="stat-card-number">67</div>
+            <div class="stat-card-label">Data Validasi</div>
+        </div>
+        <div class="stat-card-icon stat-icon-cyan">☑️</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-card-info">
+            <div class="stat-card-number">68</div>
+            <div class="stat-card-label">Data Testing</div>
+        </div>
+        <div class="stat-card-icon stat-icon-orange">💊</div>
+    </div>
+</div>
+
+<!-- About System Card -->
+<div class="card" style="padding: 25px; border-radius: 12px;">
+    <h3 style="margin-bottom: 15px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; color: #2e384d;">
+        Tentang Sistem Deteksi Anemia YOLOv11
+    </h3>
+    <p class="text-muted" style="font-size: 0.95rem; line-height: 1.6; margin-bottom: 25px;">
+        Sistem ini menggunakan arsitektur deep learning YOLOv11 untuk menganalisis dan memprediksi tingkat potensi anemia melalui segmentasi dan ekstraksi rona kapiler pada area konjungtiva mata secara non-invasif. Dengan integrasi computer vision, sistem mengklasifikasikan citra medis ke dalam kategori Anemia dan Normal dengan akurasi tinggi.
+    </p>
+
+    <div class="grid grid-2" style="gap: 30px; margin-bottom: 20px;">
+        <div>
+            <h4 style="margin-bottom: 12px; font-weight: bold; color: #007bff; display: flex; align-items: center; gap: 8px;">
+                ⚡ Cara Kerja
+            </h4>
+            <ul style="padding-left: 20px; font-size: 0.9rem; line-height: 1.8; color: #5a5c69;">
+                <li>Gambar konjungtiva di-input melalui kamera atau file upload.</li>
+                <li>Model pelacakan wajah MediaPipe melokalisasi area mata.</li>
+                <li>Modul ROI mengekstrak area kelopak bawah mata secara otomatis.</li>
+                <li>Model YOLOv11 melakukan inferensi kelas (Anemia atau Normal) beserta tingkat akurasi (confidence score).</li>
+            </ul>
+        </div>
+
+        <div>
+            <h4 style="margin-bottom: 12px; font-weight: bold; color: #007bff; display: flex; align-items: center; gap: 8px;">
+                📋 Manfaat Utama
+            </h4>
+            <ul style="padding-left: 20px; font-size: 0.9rem; line-height: 1.8; color: #5a5c69;">
+                <li><strong>Skrining Awal Cepat:</strong> Hasil deteksi instan dalam hitungan detik.</li>
+                <li><strong>Non-Invasif:</strong> Skrining tanpa jarum suntik atau pengambilan sampel darah fisik.</li>
+                <li><strong>Aksesibilitas Tinggi:</strong> Dapat dijalankan di mana saja hanya menggunakan kamera webcam/browser HP.</li>
+                <li><strong>Pembelajaran Berkelanjutan:</strong> Model YOLOv11 dapat di-retrain ulang dengan dataset baru secara periodik.</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Alert Advice -->
+    <div class="alert alert-info" style="margin-top: 25px; margin-bottom: 0; font-size: 0.85rem; border-radius: 8px; border-left: 4px solid #17a2b8;">
+        <strong>💡 Tips:</strong> Untuk hasil deteksi terbaik, ambil gambar kelopak mata bawah pasien dalam kondisi pencahayaan yang terang dan merata, serta pastikan mata terbuka lebar menghadap langsung ke arah kamera.
+    </div>
+</div>
+{% endblock %}

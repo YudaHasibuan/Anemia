@@ -28,6 +28,11 @@
             <a href="/">Beranda</a>
             <a href="/detect">Pemindai</a>
             <a class="active" href="/evaluation">Validasi Model</a>
+            {% if session.get('logged_in') %}
+                <a href="/admin/dashboard" style="background-color: var(--primary); padding: 5px 12px; border-radius: 4px; font-size: 0.9rem; color: #fff;">Dashboard</a>
+            {% else %}
+                <a href="/login" style="color: #ffc107;">Login</a>
+            {% endif %}
         </div>
     </nav>
 

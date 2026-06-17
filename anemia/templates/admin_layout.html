@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Admin Dashboard - YOLOv11 Anemia{% endblock %}</title>
+    <link rel="stylesheet" href="/static/css/style.css?v=7">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#4e73df">
+    <link rel="apple-touch-icon" href="/static/icons/icon-192x192.png">
+</head>
+<body class="admin-body">
+
+    <!-- Flash Messages -->
+    <div class="flash-messages">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash-alert flash-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    <!-- Sidebar -->
+    <aside class="admin-sidebar">
+        <div class="admin-sidebar-brand">
+            YOLO <span>V11</span>
+        </div>
+        <ul class="admin-sidebar-menu">
+            <li class="admin-sidebar-item {% if active_page == 'dashboard' %}active{% endif %}">
+                <a href="/admin/dashboard">
+                    <span>📊</span> Dashboard
+                </a>
+            </li>
+            <li class="admin-sidebar-item {% if active_page == 'dataset' %}active{% endif %}">
+                <a href="/admin/dataset">
+                    <span>🖼️</span> Dataset
+                </a>
+            </li>
+            <li class="admin-sidebar-item {% if active_page == 'history' %}active{% endif %}">
+                <a href="/admin/history">
+                    <span>📄</span> History Pelatihan
+                </a>
+            </li>
+            <li class="admin-sidebar-item">
+                <a href="/detect">
+                    <span>🔍</span> Prediksi
+                </a>
+            </li>
+            
+            <li class="admin-sidebar-heading">Settings</li>
+            <li class="admin-sidebar-item {% if active_page == 'settings' %}active{% endif %}">
+                <a href="/admin/settings">
+                    <span>👥</span> User
+                </a>
+            </li>
+            <li class="admin-sidebar-item">
+                <a href="/logout">
+                    <span>🚪</span> Logout
+                </a>
+            </li>
+        </ul>
+    </aside>
+
+    <!-- Main Wrapper -->
+    <div class="admin-main-wrapper">
+        <!-- Header -->
+        <header class="admin-header">
+            <div class="admin-user-pill">
+                <div class="admin-user-avatar">A</div>
+                <span>admin</span>
+            </div>
+        </header>
+
+        <!-- Content -->
+        <main class="admin-content">
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+
+    <script>
+        // Dismiss flash alerts after 3 seconds
+        document.addEventListener('DOMContentLoaded', () => {
+            const alerts = document.querySelectorAll('.flash-alert');
+            alerts.forEach(alert => {
+                setTimeout(() => {
+                    alert.style.opacity = '0';
+                    alert.style.transform = 'translateY(-10px)';
+                    alert.style.transition = 'all 0.5s ease';
+                    setTimeout(() => alert.remove(), 500);
+                }, 3000);
+            });
+        });
+    </script>
+</body>
+</html>

@@ -615,3 +615,345 @@ footer a {
 footer a:hover {
     text-decoration: underline;
 }
+
+/* ==========================================
+   Admin Layout & Sidebar CSS Modifications
+   ========================================== */
+
+.admin-body {
+    background-color: #f0f2f5;
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    display: flex;
+    min-height: 100vh;
+}
+
+.admin-sidebar {
+    width: 250px;
+    background-color: #ffffff;
+    border-right: 1px solid #e3e6f0;
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 100;
+    padding: 20px 0;
+}
+
+.admin-sidebar-brand {
+    padding: 0 24px 20px 24px;
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: #007bff;
+    text-transform: uppercase;
+    letter-spacing: 0.05rem;
+    border-bottom: 1px solid #f8f9fc;
+    margin-bottom: 15px;
+}
+
+.admin-sidebar-brand span {
+    color: #ffc107;
+}
+
+.admin-sidebar-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    flex: 1;
+}
+
+.admin-sidebar-heading {
+    padding: 10px 24px 5px 24px;
+    font-size: 0.7rem;
+    font-weight: 800;
+    color: #b7b9cc;
+    text-transform: uppercase;
+    letter-spacing: 0.08rem;
+}
+
+.admin-sidebar-item a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 24px;
+    color: #858796;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: all 0.15s ease-in-out;
+}
+
+.admin-sidebar-item a:hover {
+    color: #007bff;
+    background-color: #f8f9fc;
+}
+
+.admin-sidebar-item.active a {
+    color: #007bff;
+    background-color: #eaecf4;
+    border-left: 4px solid #007bff;
+}
+
+.admin-main-wrapper {
+    margin-left: 250px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.admin-header {
+    height: 70px;
+    background-color: #ffffff;
+    border-bottom: 1px solid #e3e6f0;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 0 30px;
+    position: sticky;
+    top: 0;
+    z-index: 90;
+}
+
+.admin-user-pill {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    background-color: #f8f9fc;
+    border: 1px solid #eaecf4;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #5a5c69;
+}
+
+.admin-user-avatar {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background-color: #6c757d;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: bold;
+}
+
+.admin-content {
+    padding: 30px;
+    flex: 1;
+}
+
+/* Stat Cards in Dashboard */
+.stat-card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 24px;
+    margin-bottom: 30px;
+}
+
+.stat-card {
+    background: #ffffff;
+    border: 1px solid #eaecf4;
+    border-radius: 12px;
+    padding: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    transition: transform 0.2s;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+}
+
+.stat-card-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.stat-card-number {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: #2e384d;
+    line-height: 1.2;
+}
+
+.stat-card-label {
+    font-size: 0.85rem;
+    color: #858796;
+    font-weight: 700;
+    margin-top: 4px;
+}
+
+.stat-card-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    color: #ffffff;
+}
+
+.stat-icon-blue { background-color: #007bff; }
+.stat-icon-green { background-color: #28a745; }
+.stat-icon-cyan { background-color: #17a2b8; }
+.stat-icon-orange { background-color: #ff9f43; }
+
+/* Config Table and Progress Bars */
+.progress-container {
+    margin-bottom: 15px;
+}
+
+.progress-label-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #5a5c69;
+    margin-bottom: 5px;
+}
+
+.progress-bar-bg {
+    height: 8px;
+    background-color: #eaecf4;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    border-radius: 4px;
+}
+
+.bg-success-bar { background-color: #28a745; }
+.bg-warning-bar { background-color: #ffc107; }
+.bg-danger-bar { background-color: #dc3545; }
+
+/* Dataset Browser */
+.dataset-gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+.dataset-card {
+    background-color: #ffffff;
+    border: 1px solid #eaecf4;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    transition: transform 0.2s;
+}
+
+.dataset-card:hover {
+    transform: scale(1.03);
+}
+
+.dataset-image-container {
+    width: 100%;
+    aspect-ratio: 1/1;
+    overflow: hidden;
+    background-color: #f8f9fc;
+}
+
+.dataset-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.dataset-card-meta {
+    padding: 10px;
+    font-size: 0.75rem;
+    font-family: monospace;
+    color: #5a5c69;
+    text-align: center;
+    border-top: 1px solid #eaecf4;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Login Page Wrapper */
+.login-body {
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.login-card-container {
+    width: 100%;
+    max-width: 400px;
+    padding: 20px;
+}
+
+.login-card {
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    padding: 40px 30px;
+}
+
+.login-logo {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: #007bff;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.login-logo span {
+    color: #ffc107;
+}
+
+.login-subtitle {
+    text-align: center;
+    color: #858796;
+    font-size: 0.85rem;
+    margin-bottom: 30px;
+}
+
+/* Alert modifications for Flash */
+.flash-messages {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1050;
+    max-width: 350px;
+}
+
+.flash-alert {
+    padding: 12px 20px;
+    margin-bottom: 10px;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 0.9rem;
+    animation: slideIn 0.3s ease-out;
+}
+
+.flash-success { background-color: #28a745; }
+.flash-danger { background-color: #dc3545; }
+.flash-warning { background-color: #ffc107; color: #212529; }
+.flash-info { background-color: #17a2b8; }
+
+@keyframes slideIn {
+    from { transform: translateX(120%); }
+    to { transform: translateX(0); }
+}

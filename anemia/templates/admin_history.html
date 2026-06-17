@@ -1,0 +1,124 @@
+{% extends "admin_layout.html" %}
+
+{% block title %}History Pelatihan - YOLOv11 Anemia{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 25px;">
+    <h2 style="margin-bottom: 5px;">Training History</h2>
+    <p class="text-muted" style="margin-bottom: 0;">Metrik evaluasi kinerja model dan detail konfigurasi pelatihan sistem.</p>
+</div>
+
+<!-- Config & Split Grid -->
+<div class="grid grid-2" style="margin-bottom: 30px;">
+    <!-- Config Table -->
+    <div class="card" style="border-radius: 12px; padding: 25px; margin-bottom: 0;">
+        <h3 style="margin-bottom: 15px; color: #2e384d; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
+            Training Configuration
+        </h3>
+        <table style="width: 100%; font-size: 0.9rem;">
+            <thead>
+                <tr>
+                    <th>Parameter</th>
+                    <th style="text-align: right;">Value</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Epochs</strong></td>
+                    <td style="text-align: right; color: var(--primary); font-weight: bold;">10</td>
+                </tr>
+                <tr>
+                    <td><strong>Batch Size</strong></td>
+                    <td style="text-align: right; color: var(--primary); font-weight: bold;">16</td>
+                </tr>
+                <tr>
+                    <td><strong>Image Size</strong></td>
+                    <td style="text-align: right; color: var(--primary); font-weight: bold;">640</td>
+                </tr>
+                <tr>
+                    <td><strong>Optimizer</strong></td>
+                    <td style="text-align: right;"><span class="badge badge-info">ADAM</span></td>
+                </tr>
+                <tr>
+                    <td><strong>Learning Rate</strong></td>
+                    <td style="text-align: right; color: var(--primary); font-weight: bold;">0.01</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Data Split progress bars -->
+    <div class="card" style="border-radius: 12px; padding: 25px; margin-bottom: 0; display: flex; flex-direction: column; justify-content: center;">
+        <h3 style="margin-bottom: 20px; color: #2e384d; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
+            Data Split Ratio
+        </h3>
+        
+        <!-- Training -->
+        <div class="progress-container">
+            <div class="progress-label-row">
+                <span>Training (315 sampel)</span>
+                <span>70%</span>
+            </div>
+            <div class="progress-bar-bg">
+                <div class="progress-bar-fill bg-success-bar" style="width: 70%;"></div>
+            </div>
+        </div>
+
+        <!-- Validation -->
+        <div class="progress-container">
+            <div class="progress-label-row">
+                <span>Validation (67 sampel)</span>
+                <span>15%</span>
+            </div>
+            <div class="progress-bar-bg">
+                <div class="progress-bar-fill bg-warning-bar" style="width: 15%;"></div>
+            </div>
+        </div>
+
+        <!-- Testing -->
+        <div class="progress-container" style="margin-bottom: 0;">
+            <div class="progress-label-row">
+                <span>Testing (68 sampel)</span>
+                <span>15%</span>
+            </div>
+            <div class="progress-bar-bg">
+                <div class="progress-bar-fill bg-danger-bar" style="width: 15%;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Evaluation Matrices Grid -->
+<div class="card" style="border-radius: 12px; padding: 25px; margin-bottom: 30px;">
+    <h3 style="margin-bottom: 20px; color: #2e384d; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
+        Model Evaluation Matrices
+    </h3>
+    <div class="grid grid-2">
+        <div style="text-align: center;">
+            <h4 style="margin-bottom: 10px; font-size: 0.9rem; font-weight: bold; color: var(--text-muted);">Confusion Matrix</h4>
+            <img src="/static/images/plots/confusion_matrix.png" alt="Confusion Matrix" style="max-width: 100%; border: 1px solid var(--border-color); border-radius: 6px;">
+        </div>
+        <div style="text-align: center;">
+            <h4 style="margin-bottom: 10px; font-size: 0.9rem; font-weight: bold; color: var(--text-muted);">Confusion Matrix Normalized</h4>
+            <img src="/static/images/plots/confusion_matrix_normalized.png" alt="Confusion Matrix Normalized" style="max-width: 100%; border: 1px solid var(--border-color); border-radius: 6px;">
+        </div>
+    </div>
+</div>
+
+<!-- Evaluation Curves Grid -->
+<div class="card" style="border-radius: 12px; padding: 25px; margin-bottom: 0;">
+    <h3 style="margin-bottom: 20px; color: #2e384d; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
+        Model Performance Curves
+    </h3>
+    <div class="grid grid-2">
+        <div style="text-align: center;">
+            <h4 style="margin-bottom: 10px; font-size: 0.9rem; font-weight: bold; color: var(--text-muted);">F1-Confidence Curve</h4>
+            <img src="/static/images/plots/f1_curve.png" alt="F1 Curve" style="max-width: 100%; border: 1px solid var(--border-color); border-radius: 6px;">
+        </div>
+        <div style="text-align: center;">
+            <h4 style="margin-bottom: 10px; font-size: 0.9rem; font-weight: bold; color: var(--text-muted);">Precision-Recall (PR) Curve</h4>
+            <img src="/static/images/plots/pr_curve.png" alt="PR Curve" style="max-width: 100%; border: 1px solid var(--border-color); border-radius: 6px;">
+        </div>
+    </div>
+</div>
+{% endblock %}

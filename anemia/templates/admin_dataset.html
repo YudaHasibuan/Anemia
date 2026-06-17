@@ -1,0 +1,29 @@
+{% extends "admin_layout.html" %}
+
+{% block title %}Dataset - YOLOv11 Anemia{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 25px;">
+    <h2 style="margin-bottom: 5px;">Dataset</h2>
+    <p class="text-muted" style="margin-bottom: 0;">Lihat daftar sampel citra konjungtiva mata yang digunakan untuk melatih model YOLOv11.</p>
+</div>
+
+<div class="card" style="border-radius: 12px; padding: 25px;">
+    <h3 style="margin-bottom: 20px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; color: #2e384d;">
+        Galeri Citra Latih (Dataset Medis)
+    </h3>
+    
+    <div class="dataset-gallery">
+        {% for img in images %}
+        <div class="dataset-card">
+            <div class="dataset-image-container">
+                <img src="/static/images/dataset/{{ img }}" alt="Conjunctiva Sample">
+            </div>
+            <div class="dataset-card-meta" title="{{ img }}">
+                {{ img }}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends "admin_layout.html" %}
+
+{% block title %}Settings - YOLOv11 Anemia{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 25px;">
+    <h2 style="margin-bottom: 5px;">Settings</h2>
+    <p class="text-muted" style="margin-bottom: 0;">Kelola akun admin dan kredensial akses masuk Anda.</p>
+</div>
+
+<div class="card" style="border-radius: 12px; padding: 25px; max-width: 500px;">
+    <h3 style="margin-bottom: 20px; color: #2e384d; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
+        Profil Admin
+    </h3>
+    
+    <form action="/admin/settings" method="POST">
+        <div class="form-group" style="margin-bottom: 15px;">
+            <label for="username">Username</label>
+            <input type="text" id="username" class="form-control" value="admin" disabled style="background-color: #f8f9fc;">
+        </div>
+        
+        <div class="form-group" style="margin-bottom: 25px;">
+            <label for="password">Ubah Password Baru</label>
+            <input type="password" id="password" name="password" class="form-control" placeholder="Masukkan password baru..." required>
+        </div>
+        
+        <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+    </form>
+</div>
+{% endblock %}

@@ -27,7 +27,11 @@
             <a class="active" href="/">Beranda</a>
             <a href="/detect">Pemindai</a>
             <a href="/evaluation">Validasi Model</a>
-            <a href="/detect" class="btn btn-primary" style="padding: 6px 12px; font-size: 0.9rem; color: #fff;">Mulai Diagnosa</a>
+            {% if session.get('logged_in') %}
+                <a href="/admin/dashboard" style="background-color: var(--primary); padding: 5px 12px; border-radius: 4px; font-size: 0.9rem;">Dashboard</a>
+            {% else %}
+                <a href="/login" style="color: #ffc107;">Login</a>
+            {% endif %}
         </div>
     </nav>
 

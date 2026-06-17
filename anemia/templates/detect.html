@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistem Pemindai - Deteksi Anemia YOLOv11</title>
-    <link rel="stylesheet" href="/static/css/style.css?v=6">
+    <link rel="stylesheet" href="/static/css/style.css?v=7">
     <link rel="manifest" href="/manifest.json">
-    <meta name="theme-color" content="#f4f6f9">
+    <meta name="theme-color" content="#4e73df">
     <link rel="apple-touch-icon" href="/static/icons/icon-192x192.png">
     <script>
         if ('serviceWorker' in navigator) {
@@ -14,134 +14,188 @@
         }
     </script>
 </head>
-<body>
+<body class="admin-body">
 
-    <!-- TopNavBar -->
-    <nav class="navbar">
-        <a href="/" class="brand">
-            Deteksi <span>Anemia</span>
-        </a>
-        <div class="nav-links">
-            <a href="/">Beranda</a>
-            <a class="active" href="/detect">Pemindai</a>
-            <a href="/evaluation">Validasi Model</a>
+    <!-- Flash Messages -->
+    <div class="flash-messages">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash-alert flash-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    <!-- Sidebar -->
+    <aside class="admin-sidebar">
+        <div class="admin-sidebar-brand">
+            YOLO <span>V11</span>
         </div>
-    </nav>
-
-    <main class="main-content container">
-        
-        <div class="grid grid-3-2">
+        <ul class="admin-sidebar-menu">
+            <li class="admin-sidebar-item">
+                <a href="/">
+                    <span>🏠</span> Beranda
+                </a>
+            </li>
+            <li class="admin-sidebar-item active">
+                <a href="/detect">
+                    <span>🔍</span> Pemindai
+                </a>
+            </li>
+            <li class="admin-sidebar-item">
+                <a href="/evaluation">
+                    <span>📊</span> Validasi Model
+                </a>
+            </li>
             
-            <!-- Left Panel (Controls & Info) -->
-            <div class="card">
-                <h2 style="margin-bottom: 15px;">Pilih Mode Deteksi</h2>
-                <p class="text-muted" style="font-size: 0.9rem; margin-bottom: 20px;">
-                    Gunakan kamera secara langsung atau unggah foto mata Anda untuk dianalisis oleh sistem Machine Learning kami.
-                </p>
+            <li class="admin-sidebar-heading">Akses</li>
+            {% if session.get('logged_in') %}
+                <li class="admin-sidebar-item">
+                    <a href="/admin/dashboard">
+                        <span>⚙️</span> Dashboard Admin
+                    </a>
+                </li>
+                <li class="admin-sidebar-item">
+                    <a href="/logout">
+                        <span>🚪</span> Logout
+                    </a>
+                </li>
+            {% else %}
+                <li class="admin-sidebar-item">
+                    <a href="/login">
+                        <span>🔑</span> Login Admin
+                    </a>
+                </li>
+            {% endif %}
+        </ul>
+    </aside>
 
-                <!-- Tab Switcher -->
-                <div class="tab-bar">
-                    <button id="tabCamera" class="tab-btn tab-active">Kamera Live</button>
-                    <button id="tabUpload" class="tab-btn">Upload Foto</button>
-                </div>
+    <!-- Main Wrapper -->
+    <div class="admin-main-wrapper">
+        <!-- Header -->
+        <header class="admin-header">
+            <div class="admin-user-pill">
+                <div class="admin-user-avatar">U</div>
+                <span>User</span>
+            </div>
+        </header>
 
-                <!-- Instructions Camera -->
-                <div id="instrCamera" style="margin-bottom: 20px;">
-                    <h4 style="margin-bottom: 10px;">Petunjuk Pengambilan Kamera:</h4>
-                    <ol class="step-list">
-                        <li class="step-item">
-                            <span class="step-number">1</span>
-                            <span style="font-size: 0.9rem;">Pastikan wajah terpapar cahaya terang.</span>
-                        </li>
-                        <li class="step-item">
-                            <span class="step-number">2</span>
-                            <span style="font-size: 0.9rem;">Lepaskan kacamata, tatap kamera secara lurus.</span>
-                        </li>
-                        <li class="step-item">
-                            <span class="step-number">3</span>
-                            <span style="font-size: 0.9rem;">Tarik sedikit kelopak mata bagian bawah (konjungtiva) sebelum mengambil gambar.</span>
-                        </li>
-                    </ol>
-                </div>
-
-                <!-- Instructions Upload -->
-                <div id="instrUpload" class="hidden" style="margin-bottom: 20px;">
-                    <h4 style="margin-bottom: 10px;">Petunjuk Upload Foto:</h4>
-                    <ol class="step-list">
-                        <li class="step-item">
-                            <span class="step-number">1</span>
-                            <span style="font-size: 0.9rem;">Unggah foto wajah dekat atau close-up mata yang jelas.</span>
-                        </li>
-                        <li class="step-item">
-                            <span class="step-number">2</span>
-                            <span style="font-size: 0.9rem;">Format foto yang didukung: JPG, JPEG, PNG, WEBP.</span>
-                        </li>
-                        <li class="step-item">
-                            <span class="step-number">3</span>
-                            <span style="font-size: 0.9rem;">Pastikan pencahayaan pada mata terlihat jelas dan tidak buram.</span>
-                        </li>
-                    </ol>
-                </div>
-
-                <!-- Loading indicator -->
-                <div id="loading" class="hidden alert alert-info" style="margin-bottom: 20px;">
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                        <span style="font-weight: bold;">MENGANALISIS CITRA MEDIS...</span>
-                    </div>
-                </div>
-
-                <!-- Action Buttons -->
-                <div style="margin-top: 20px;">
-                    <button id="captureBtn" class="btn btn-primary btn-block">AMBIL FOTO &amp; DETEKSI</button>
-                    <button id="uploadBtn" class="btn btn-success btn-block hidden" disabled="true">MULAILAH DETEKSI SEKARANG</button>
-                </div>
+        <!-- Content -->
+        <main class="admin-content">
+            <div style="margin-bottom: 25px;">
+                <h2 style="margin-bottom: 5px;">Sistem Pemindai</h2>
+                <p class="text-muted" style="margin-bottom: 0;">Lakukan pemindaian konjungtiva mata Anda secara non-invasif.</p>
             </div>
 
-            <!-- Right Panel (Webcam or File Input View) -->
-            <div class="card" style="padding: 10px;">
-                
-                <!-- Camera View -->
-                <div id="panelCamera" class="w-full">
-                    <div class="scanner-container">
-                        <video id="webcam" autoplay playsinline></video>
-                        <canvas id="faceCanvas"></canvas>
-                        <div class="scan-line"></div>
-                        <div class="reticle"></div>
-                        
-                        <!-- Overlay Status Badges -->
-                        <div style="position: absolute; top: 10px; left: 10px; z-index: 15;">
-                            <span class="badge badge-danger">Live Stream</span>
-                        </div>
-                        
-                        <div id="faceStatus" style="position: absolute; top: 10px; right: 10px; z-index: 15; background-color: rgba(0,0,0,0.6); padding: 5px 10px; border-radius: 4px; display: flex; align-items: center; gap: 6px; color: #fff;">
-                            <span id="faceStatusDot" style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: #ffc107;"></span>
-                            <span id="faceStatusText" style="font-size: 0.75rem; font-weight: bold;">MENDETEKSI...</span>
+            <div class="grid grid-3-2">
+                <!-- Left Panel (Controls & Info) -->
+                <div class="card" style="border-radius: 12px; padding: 25px; margin-bottom: 0;">
+                    <h3 style="margin-bottom: 10px; color: #2e384d;">Pilih Mode Deteksi</h3>
+                    <p class="text-muted" style="font-size: 0.9rem; margin-bottom: 20px;">
+                        Gunakan kamera secara langsung atau unggah foto mata Anda untuk dianalisis oleh model YOLOv11.
+                    </p>
+
+                    <!-- Tab Switcher -->
+                    <div class="tab-bar">
+                        <button id="tabCamera" class="tab-btn tab-active">Kamera Live</button>
+                        <button id="tabUpload" class="tab-btn">Upload Foto</button>
+                    </div>
+
+                    <!-- Instructions Camera -->
+                    <div id="instrCamera" style="margin-bottom: 20px;">
+                        <h4 style="margin-bottom: 10px; font-weight: bold; font-size: 0.95rem;">Petunjuk Pengambilan Kamera:</h4>
+                        <ol class="step-list">
+                            <li class="step-item">
+                                <span class="step-number">1</span>
+                                <span style="font-size: 0.85rem; color: #5a5c69;">Pastikan wajah terpapar cahaya terang dan merata.</span>
+                            </li>
+                            <li class="step-item">
+                                <span class="step-number">2</span>
+                                <span style="font-size: 0.85rem; color: #5a5c69;">Lepaskan kacamata dan tatap kamera secara lurus.</span>
+                            </li>
+                            <li class="step-item">
+                                <span class="step-number">3</span>
+                                <span style="font-size: 0.85rem; color: #5a5c69;">Tarik sedikit kelopak mata bagian bawah (konjungtiva) sebelum mengambil gambar.</span>
+                            </li>
+                        </ol>
+                    </div>
+
+                    <!-- Instructions Upload -->
+                    <div id="instrUpload" class="hidden" style="margin-bottom: 20px;">
+                        <h4 style="margin-bottom: 10px; font-weight: bold; font-size: 0.95rem;">Petunjuk Upload Foto:</h4>
+                        <ol class="step-list">
+                            <li class="step-item">
+                                <span class="step-number">1</span>
+                                <span style="font-size: 0.85rem; color: #5a5c69;">Unggah foto wajah dekat atau close-up mata yang jelas.</span>
+                            </li>
+                            <li class="step-item">
+                                <span class="step-number">2</span>
+                                <span style="font-size: 0.85rem; color: #5a5c69;">Format foto yang didukung: JPG, JPEG, PNG, WEBP.</span>
+                            </li>
+                            <li class="step-item">
+                                <span class="step-number">3</span>
+                                <span style="font-size: 0.85rem; color: #5a5c69;">Pastikan pencahayaan pada mata terlihat jelas dan tidak buram.</span>
+                            </li>
+                        </ol>
+                    </div>
+
+                    <!-- Loading indicator -->
+                    <div id="loading" class="hidden alert alert-info" style="margin-bottom: 20px; border-radius: 8px;">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <span style="font-weight: bold;">MENGANALISIS CITRA MEDIS...</span>
                         </div>
                     </div>
-                    <canvas id="canvas" class="hidden"></canvas>
+
+                    <!-- Action Buttons -->
+                    <div style="margin-top: 20px;">
+                        <button id="captureBtn" class="btn btn-primary btn-block" style="border-radius: 8px; padding: 12px;">AMBIL FOTO &amp; DETEKSI</button>
+                        <button id="uploadBtn" class="btn btn-success btn-block hidden" disabled="true" style="border-radius: 8px; padding: 12px;">MULAILAH DETEKSI SEKARANG</button>
+                    </div>
                 </div>
 
-                <!-- Upload File View -->
-                <div id="panelUpload" class="hidden w-full">
-                    <div id="dropZone" class="drop-zone">
-                        <img id="uploadPreview" class="hidden" alt="Preview foto" />
-                        <div id="uploadPlaceholder">
-                            <div style="font-size: 3.5rem; margin-bottom: 15px;">&#128193;</div>
-                            <h4 style="margin-bottom: 8px;">Tarik dan Lepaskan File Anda di Sini</h4>
-                            <p class="text-muted" style="font-size: 0.9rem;">Atau klik untuk memilih file dari komputer Anda</p>
-                            <div style="margin-top: 10px;">
-                                <span class="badge badge-secondary">PNG, JPG, JPEG, WEBP</span>
+                <!-- Right Panel (Webcam or File Input View) -->
+                <div class="card" style="padding: 15px; border-radius: 12px; margin-bottom: 0; display: flex; align-items: center; justify-content: center; background-color: #ffffff;">
+                    <!-- Camera View -->
+                    <div id="panelCamera" class="w-full" style="width: 100%;">
+                        <div class="scanner-container" style="border-radius: 8px;">
+                            <video id="webcam" autoplay playsinline></video>
+                            <canvas id="faceCanvas"></canvas>
+                            <div class="scan-line"></div>
+                            <div class="reticle"></div>
+                            
+                            <!-- Overlay Status Badges -->
+                            <div style="position: absolute; top: 10px; left: 10px; z-index: 15;">
+                                <span class="badge badge-danger">Live Stream</span>
+                            </div>
+                            
+                            <div id="faceStatus" style="position: absolute; top: 10px; right: 10px; z-index: 15; background-color: rgba(0,0,0,0.6); padding: 5px 10px; border-radius: 4px; display: flex; align-items: center; gap: 6px; color: #fff;">
+                                <span id="faceStatusDot" style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: #ffc107;"></span>
+                                <span id="faceStatusText" style="font-size: 0.75rem; font-weight: bold;">MENDETEKSI...</span>
                             </div>
                         </div>
+                        <canvas id="canvas" class="hidden"></canvas>
                     </div>
-                    <input type="file" id="fileInput" accept="image/*" class="hidden">
+
+                    <!-- Upload File View -->
+                    <div id="panelUpload" class="hidden w-full" style="width: 100%;">
+                        <div id="dropZone" class="drop-zone" style="border-radius: 8px; border: 2px dashed #007bff; background-color: #f8f9fc;">
+                            <img id="uploadPreview" class="hidden" alt="Preview foto" style="border-radius: 6px; max-height: 250px;" />
+                            <div id="uploadPlaceholder">
+                                <div style="font-size: 3.5rem; margin-bottom: 15px; color: #007bff;">📁</div>
+                                <h4 style="margin-bottom: 8px; color: #2e384d;">Tarik &amp; Lepaskan File Anda di Sini</h4>
+                                <p class="text-muted" style="font-size: 0.85rem;">Atau klik untuk memilih file dari komputer Anda</p>
+                                <div style="margin-top: 10px;">
+                                    <span class="badge badge-secondary">PNG, JPG, JPEG, WEBP</span>
+                                </div>
+                            </div>
+                        </div>
+                        <input type="file" id="fileInput" accept="image/*" class="hidden">
+                    </div>
                 </div>
-
             </div>
-
-        </div>
-
-    </main>
+        </main>
+    </div>
 
     <script src="/static/js/camera.js"></script>
     

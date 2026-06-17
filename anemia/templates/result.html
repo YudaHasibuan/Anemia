@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Laporan - Deteksi Anemia YOLOv11</title>
-    <link rel="stylesheet" href="/static/css/style.css?v=6">
+    <link rel="stylesheet" href="/static/css/style.css?v=7">
     <link rel="manifest" href="/manifest.json">
-    <meta name="theme-color" content="#f4f6f9">
+    <meta name="theme-color" content="#4e73df">
     <link rel="apple-touch-icon" href="/static/icons/icon-192x192.png">
     <script>
       if ('serviceWorker' in navigator) {
@@ -16,150 +16,201 @@
       }
     </script>
 </head>
-<body>
+<body class="admin-body">
 
-    <!-- TopNavBar -->
-    <nav class="navbar">
-        <a href="/" class="brand">
-            Deteksi <span>Anemia</span>
-        </a>
-        <div class="nav-links">
-            <a href="/">Beranda</a>
-            <a href="/detect">Pemindai</a>
-            <a href="/evaluation">Validasi Model</a>
+    <!-- Flash Messages -->
+    <div class="flash-messages">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash-alert flash-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    <!-- Sidebar -->
+    <aside class="admin-sidebar">
+        <div class="admin-sidebar-brand">
+            YOLO <span>V11</span>
         </div>
-    </nav>
-
-    <!-- Hidden element for compatibility with original JS script -->
-    <div id="glowOrb" style="display: none;"></div>
-
-    <main class="main-content container">
-        
-        <div class="text-center" style="margin-bottom: 30px;">
-            <h1>Laporan Diagnostik Machine Learning</h1>
-            <p class="text-muted">Hasil evaluasi segmentasi citra konjungtiva dan prediksi model neural network.</p>
-        </div>
-
-        <!-- Dashboard Layout -->
-        <div class="grid grid-3-2" id="resultDashboard">
+        <ul class="admin-sidebar-menu">
+            <li class="admin-sidebar-item">
+                <a href="/">
+                    <span>🏠</span> Beranda
+                </a>
+            </li>
+            <li class="admin-sidebar-item">
+                <a href="/detect">
+                    <span>🔍</span> Pemindai
+                </a>
+            </li>
+            <li class="admin-sidebar-item">
+                <a href="/evaluation">
+                    <span>📊</span> Validasi Model
+                </a>
+            </li>
             
-            <!-- Left Side: Main Result -->
-            <div class="card text-center" id="mainResultCard" style="display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 40px 20px;">
-                <span class="badge badge-secondary" style="margin-bottom: 15px;">Klasifikasi Utama Model</span>
-                
-                <h2 id="predictionLabel" class="status-text">Proses Analisis...</h2>
-                
-                <div style="margin-top: 10px; font-size: 0.85rem; color: var(--text-muted);">
-                    Engine: <strong id="modelTypeUsed">Memuat...</strong>
-                </div>
-                
-                <div style="margin-top: 10px; font-size: 0.85rem; color: var(--text-muted);">
-                    ID Referensi: <strong>#ADS-<script>document.write(Math.floor(Math.random()*90000)+10000)</script></strong>
-                </div>
+            <li class="admin-sidebar-heading">Akses</li>
+            {% if session.get('logged_in') %}
+                <li class="admin-sidebar-item">
+                    <a href="/admin/dashboard">
+                        <span>⚙️</span> Dashboard Admin
+                    </a>
+                </li>
+                <li class="admin-sidebar-item">
+                    <a href="/logout">
+                        <span>🚪</span> Logout
+                    </a>
+                </li>
+            {% else %}
+                <li class="admin-sidebar-item">
+                    <a href="/login">
+                        <span>🔑</span> Login Admin
+                    </a>
+                </li>
+            {% endif %}
+        </ul>
+    </aside>
+
+    <!-- Main Wrapper -->
+    <div class="admin-main-wrapper">
+        <!-- Header -->
+        <header class="admin-header">
+            <div class="admin-user-pill">
+                <div class="admin-user-avatar">U</div>
+                <span>User</span>
+            </div>
+        </header>
+
+        <!-- Content -->
+        <main class="admin-content">
+            <div style="margin-bottom: 25px;">
+                <h2 style="margin-bottom: 5px;">Laporan Diagnostik</h2>
+                <p class="text-muted" style="margin-bottom: 0;">Hasil evaluasi konjungtiva mata dan prediksi model YOLOv11.</p>
             </div>
 
-            <!-- Right Side: Confidence Score -->
-            <div class="card text-center" style="display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 30px 20px;">
-                <span class="badge badge-info" style="margin-bottom: 15px;">Tingkat Keyakinan (Confidence)</span>
+            <!-- Dashboard Layout -->
+            <div class="grid grid-3-2" id="resultDashboard" style="align-items: start;">
                 
-                <div class="progress-circle" id="confCircle">
-                    <span id="confidenceLevel">0%</span>
-                </div>
-                
-                <p class="text-muted" style="font-size: 0.85rem; margin-top: 10px;">Probabilitas kecocokan citra dengan dataset latih.</p>
-            </div>
-            
-            <!-- Full Width: Suggestions -->
-            <div class="card" id="suggestionCard" style="display: none; grid-column: span 2; padding: 25px;">
-                <div style="display: flex; gap: 20px; align-items: center;">
-                    <div id="suggestionIcon" style="font-size: 2.5rem;"></div>
-                    <div>
-                        <h3 id="suggestionTitle" style="margin-bottom: 8px;">Saran Tindakan Kesehatan</h3>
-                        <p id="suggestionText" style="margin-bottom: 0; font-size: 0.95rem; line-height: 1.6;"></p>
+                <!-- Left Side: Main Result -->
+                <div class="card text-center" id="mainResultCard" style="display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 40px 20px; border-radius: 12px; margin-bottom: 0;">
+                    <span class="badge badge-secondary" style="margin-bottom: 15px;">Klasifikasi Utama Model</span>
+                    
+                    <h2 id="predictionLabel" class="status-text" style="font-size: 2.2rem; margin: 10px 0;">Proses Analisis...</h2>
+                    
+                    <div style="margin-top: 10px; font-size: 0.85rem; color: var(--text-muted);">
+                        Engine: <strong id="modelTypeUsed">Memuat...</strong>
+                    </div>
+                    
+                    <div style="margin-top: 10px; font-size: 0.85rem; color: var(--text-muted);">
+                        ID Referensi: <strong>#ADS-<script>document.write(Math.floor(Math.random()*90000)+10000)</script></strong>
                     </div>
                 </div>
-            </div>
 
-            <!-- Full Width: Model Performance Metrics -->
-            <div class="card" style="grid-column: span 2;">
-                <h3 class="card-title">Metrik Akurasi & Confusion Matrix Model</h3>
-                
-                <div class="grid grid-2" style="margin-top: 20px;">
-                    <div>
-                        <p style="font-size: 0.9rem; margin-bottom: 20px;">
-                            Model deep learning kami dikembangkan dan divalidasi menggunakan dataset medis optik terverifikasi untuk memastikan tingkat kepatuhan akurasi yang optimal.
-                        </p>
-                        
-                        <table style="width: 100%; border: 1px solid var(--border-color); font-size: 0.9rem;">
-                            <tbody>
-                                <tr>
-                                    <td><strong>Akurasi Validasi</strong></td>
-                                    <td style="color: var(--success); font-weight: bold; text-align: right;">96.42%</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Sensitivitas (Recall)</strong></td>
-                                    <td style="color: var(--danger); font-weight: bold; text-align: right;">95.04%</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Spesifisitas</strong></td>
-                                    <td style="color: var(--text-color); font-weight: bold; text-align: right;">97.81%</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                <!-- Right Side: Confidence Score -->
+                <div class="card text-center" style="display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 30px 20px; border-radius: 12px; margin-bottom: 0;">
+                    <span class="badge badge-info" style="margin-bottom: 15px;">Tingkat Keyakinan (Confidence)</span>
+                    
+                    <div class="progress-circle" id="confCircle" style="margin: 10px auto;">
+                        <span id="confidenceLevel">0%</span>
                     </div>
+                    
+                    <p class="text-muted" style="font-size: 0.85rem; margin-top: 10px; margin-bottom: 0;">Probabilitas kecocokan citra dengan dataset latih.</p>
+                </div>
+                
+                <!-- Full Width: Suggestions -->
+                <div class="card" id="suggestionCard" style="display: none; grid-column: span 2; padding: 25px; border-radius: 12px; margin-bottom: 0;">
+                    <div style="display: flex; gap: 20px; align-items: center;">
+                        <div id="suggestionIcon" style="font-size: 2.5rem;"></div>
+                        <div>
+                            <h3 id="suggestionTitle" style="margin-bottom: 8px;">Saran Tindakan Kesehatan</h3>
+                            <p id="suggestionText" style="margin-bottom: 0; font-size: 0.95rem; line-height: 1.6;"></p>
+                        </div>
+                    </div>
+                </div>
 
-                    <div>
-                        <h4 style="font-size: 0.9rem; font-weight: bold; margin-bottom: 10px; text-align: center;">Confusion Matrix (Dataset Uji)</h4>
-                        
-                        <div class="matrix-grid">
-                            <div class="matrix-cell true-cell">
-                                <div class="matrix-cell-title">True Negative</div>
-                                <div class="matrix-cell-value">1204</div>
-                                <div class="matrix-cell-desc">Sehat &rarr; Hasil Sehat</div>
-                            </div>
-                            <div class="matrix-cell false-cell">
-                                <div class="matrix-cell-title">False Positive</div>
-                                <div class="matrix-cell-value">35</div>
-                                <div class="matrix-cell-desc">Sehat &rarr; Hasil Anemia</div>
-                            </div>
-                            <div class="matrix-cell false-cell">
-                                <div class="matrix-cell-title">False Negative</div>
-                                <div class="matrix-cell-value">52</div>
-                                <div class="matrix-cell-desc">Anemia &rarr; Hasil Sehat</div>
-                            </div>
-                            <div class="matrix-cell true-cell">
-                                <div class="matrix-cell-title">True Positive</div>
-                                <div class="matrix-cell-value">1109</div>
-                                <div class="matrix-cell-desc">Anemia &rarr; Hasil Anemia</div>
+                <!-- Full Width: Model Performance Metrics -->
+                <div class="card" style="grid-column: span 2; border-radius: 12px; padding: 25px; margin-bottom: 0;">
+                    <h3 style="margin-bottom: 15px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; color: #2e384d;">
+                        Metrik Akurasi & Confusion Matrix Model
+                    </h3>
+                    
+                    <div class="grid grid-2" style="gap: 30px; align-items: center;">
+                        <div>
+                            <p style="font-size: 0.9rem; line-height: 1.6; margin-bottom: 20px; color: #5a5c69;">
+                                Model deep learning kami dikembangkan dan divalidasi menggunakan dataset medis optik terverifikasi untuk memastikan tingkat kepatuhan akurasi yang optimal.
+                            </p>
+                            
+                            <table style="width: 100%; border: 1px solid var(--border-color); font-size: 0.9rem;">
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Akurasi Validasi</strong></td>
+                                        <td style="color: var(--success); font-weight: bold; text-align: right;">96.42%</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Sensitivitas (Recall)</strong></td>
+                                        <td style="color: var(--danger); font-weight: bold; text-align: right;">95.04%</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Spesifisitas</strong></td>
+                                        <td style="color: var(--text-color); font-weight: bold; text-align: right;">97.81%</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div>
+                            <h4 style="font-size: 0.9rem; font-weight: bold; margin-bottom: 15px; text-align: center; color: #5a5c69;">
+                                Confusion Matrix (Dataset Uji)
+                            </h4>
+                            
+                            <div class="matrix-grid">
+                                <div class="matrix-cell true-cell">
+                                    <div class="matrix-cell-title">True Negative</div>
+                                    <div class="matrix-cell-value">1204</div>
+                                    <div class="matrix-cell-desc">Sehat &rarr; Hasil Sehat</div>
+                                </div>
+                                <div class="matrix-cell false-cell">
+                                    <div class="matrix-cell-title">False Positive</div>
+                                    <div class="matrix-cell-value">35</div>
+                                    <div class="matrix-cell-desc">Sehat &rarr; Hasil Anemia</div>
+                                </div>
+                                <div class="matrix-cell false-cell">
+                                    <div class="matrix-cell-title">False Negative</div>
+                                    <div class="matrix-cell-value">52</div>
+                                    <div class="matrix-cell-desc">Anemia &rarr; Hasil Sehat</div>
+                                </div>
+                                <div class="matrix-cell true-cell">
+                                    <div class="matrix-cell-title">True Positive</div>
+                                    <div class="matrix-cell-value">1109</div>
+                                    <div class="matrix-cell-desc">Anemia &rarr; Hasil Anemia</div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
+
             </div>
 
-        </div>
+            <!-- Action Options -->
+            <div style="margin-top: 30px; display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+                <a href="/detect" class="btn btn-primary" style="border-radius: 8px; padding: 10px 24px;">Pindai Pasien Lain</a>
+                <a href="/" class="btn btn-secondary" style="border-radius: 8px; padding: 10px 24px;">Tutup Laporan</a>
+            </div>
+            
+            <!-- Medical Disclaimer -->
+            <div class="alert alert-warning text-center" style="margin-top: 40px; font-size: 0.85rem; border-radius: 8px; border-left: 4px solid #f6c23e; margin-bottom: 0;">
+                <strong>⚠️ PEMBERITAHUAN PENTING:</strong> Laporan hasil skrining ini dihasilkan secara komputasi melalui pemrosesan citra (YOLOv11 Real-Time Deep Learning) 
+                dan tidak dimaksudkan sebagai pengganti diagnosis laboratorium medis formal atau konsultasi dokter ahli. Konsultasikan ke dokter jika Anda memiliki keluhan fisik yang berkelanjutan.
+            </div>
 
-        <!-- Action Options -->
-        <div style="margin-top: 30px; display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
-            <a href="/detect" class="btn btn-primary">Pindai Pasien Lain</a>
-            <a href="/" class="btn btn-secondary">Tutup Dashboard</a>
-        </div>
-        
-        <!-- Medical Disclaimer -->
-        <div class="alert alert-warning text-center" style="margin-top: 40px; font-size: 0.85rem;">
-            <strong>PEMBERITAHUAN PENTING:</strong> Laporan hasil skrining ini dihasilkan secara komputasi melalui pemrosesan citra (YOLOv11 Real-Time Deep Learning) 
-            dan tidak dimaksudkan sebagai pengganti diagnosis laboratorium medis formal atau konsultasi dokter ahli. Konsultasikan ke dokter jika Anda memiliki keluhan fisik yang berkelanjutan.
-        </div>
+        </main>
+    </div>
 
-    </main>
+    <!-- Hidden element for compatibility with original JS script -->
+    <div id="glowOrb" style="display: none;"></div>
 
-    <!-- Footer -->
-    <footer>
-        <div class="container">
-            <p>&copy; 2026 Engine Klasifikasi Penyakit Berbasis Machine Learning. Dikembangkan dengan Python Flask.</p>
-        </div>
-    </footer>
-    
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const pred = sessionStorage.getItem('prediction');
@@ -172,7 +223,6 @@
             const modelTypeEl = document.getElementById('modelTypeUsed');
             const confCircle = document.getElementById('confCircle');
             const bodyEl = document.getElementById('resultDashboard');
-            const orbEl = document.getElementById('glowOrb');
 
             if (modelTypeEl) {
                 modelTypeEl.textContent = modelType;

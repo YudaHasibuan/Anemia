@@ -1,12 +1,14 @@
 import os
 import cv2
 import numpy as np
-from flask import Flask, render_template, request, jsonify, send_from_directory
+import functools
+from flask import Flask, render_template, request, jsonify, send_from_directory, session, redirect, url_for, flash
 from utils.roi_detection import extract_conjunctiva_roi
 from utils.preprocessing import preprocess_image
 from utils.predict import predict_image
 
 app = Flask(__name__)
+app.secret_key = 'super_secret_yolov11_anemia_dashboard_key_2026'
 
 # Konfigurasi folder penyimpanan opsional
 UPLOAD_FOLDER = os.path.join('static', 'images', 'temp')
@@ -152,6 +154,82 @@ def detect_frame():
         print(f"Error /detect_frame: {e}")
         return jsonify({'faces': [], 'eyes': [], 'detected': False}), 200
 
+# Otentikasi dan Dashboard Admin
+ADMIN_CREDENTIALS = {
+    'username': 'admin',
+    'password': 'password123'
+}
+
+def login_required(view):
+    @functools.wraps(view)
+    def wrapped_view(**kwargs):
+        if not session.get('logged_in'):
+            flash('Silakan login terlebih dahulu untuk mengakses dashboard.', 'danger')
+            return redirect(url_for('login'))
+        return view(**kwargs)
+    return wrapped_view
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if session.get('logged_in'):
+        return redirect(url_for('admin_dashboard'))
+        
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+        
+        if username == ADMIN_CREDENTIALS['username'] and password == ADMIN_CREDENTIALS['password']:
+            session['logged_in'] = True
+            session['username'] = username
+            flash('Selamat datang kembali, admin!', 'success')
+            return redirect(url_for('admin_dashboard'))
+        else:
+            flash('Username atau password salah.', 'danger')
+            
+    return render_template('login.html')
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    flash('Anda telah berhasil keluar.', 'success')
+    return redirect(url_for('login'))
+
+@app.route('/admin/dashboard')
+@login_required
+def admin_dashboard():
+    return render_template('admin_dashboard.html', active_page='dashboard')
+
+@app.route('/admin/dataset')
+@login_required
+def admin_dataset():
+    dataset_images = [
+        "017df65b-IMG_20241224_094520.jpg",
+        "01a17c48-IMG_20241224_093310.jpg",
+        "020339c2-IMG_20241224_103340.jpg",
+        "022e25f5-IMG_20241224_093115.jpg",
+        "025ff11b-IMG_20241224_110545.jpg",
+        "028c11aa-IMG_20241224_092030.jpg",
+        "030d99ba-IMG_20241224_101215.jpg",
+        "032b44ef-IMG_20241224_094000.jpg"
+    ]
+    return render_template('admin_dataset.html', active_page='dataset', images=dataset_images)
+
+@app.route('/admin/history')
+@login_required
+def admin_history():
+    return render_template('admin_history.html', active_page='history')
+
+@app.route('/admin/settings', methods=['GET', 'POST'])
+@login_required
+def admin_settings():
+    if request.method == 'POST':
+        new_password = request.form.get('password')
+        if new_password:
+            ADMIN_CREDENTIALS['password'] = new_password
+            flash('Password berhasil diperbarui!', 'success')
+        else:
+            flash('Password tidak boleh kosong.', 'danger')
+    return render_template('admin_settings.html', active_page='settings')
 if __name__ == '__main__':
     # Mode debug bisa dinonaktifkan pada tahap produksi
     app.run(debug=True, host='0.0.0.0', port=5002)
