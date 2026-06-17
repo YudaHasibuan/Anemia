@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Laporan - Deteksi Anemia CNN</title>
+    <title>Laporan - Deteksi Anemia YOLOv11</title>
     <link rel="stylesheet" href="/static/css/style.css?v=6">
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#f4f6f9">
@@ -49,7 +49,11 @@
                 
                 <h2 id="predictionLabel" class="status-text">Proses Analisis...</h2>
                 
-                <div style="margin-top: 15px; font-size: 0.85rem; color: var(--text-muted);">
+                <div style="margin-top: 10px; font-size: 0.85rem; color: var(--text-muted);">
+                    Engine: <strong id="modelTypeUsed">Memuat...</strong>
+                </div>
+                
+                <div style="margin-top: 10px; font-size: 0.85rem; color: var(--text-muted);">
                     ID Referensi: <strong>#ADS-<script>document.write(Math.floor(Math.random()*90000)+10000)</script></strong>
                 </div>
             </div>
@@ -143,7 +147,7 @@
         
         <!-- Medical Disclaimer -->
         <div class="alert alert-warning text-center" style="margin-top: 40px; font-size: 0.85rem;">
-            <strong>PEMBERITAHUAN PENTING:</strong> Laporan hasil skrining ini dihasilkan secara komputasi melalui pemrosesan citra (Convolutional Neural Network) 
+            <strong>PEMBERITAHUAN PENTING:</strong> Laporan hasil skrining ini dihasilkan secara komputasi melalui pemrosesan citra (YOLOv11 Real-Time Deep Learning) 
             dan tidak dimaksudkan sebagai pengganti diagnosis laboratorium medis formal atau konsultasi dokter ahli. Konsultasikan ke dokter jika Anda memiliki keluhan fisik yang berkelanjutan.
         </div>
 
@@ -160,13 +164,19 @@
         document.addEventListener('DOMContentLoaded', () => {
             const pred = sessionStorage.getItem('prediction');
             const conf = sessionStorage.getItem('confidence');
+            const modelType = sessionStorage.getItem('model_type') || 'YOLOv11';
             const err = sessionStorage.getItem('error');
 
             const labelEl = document.getElementById('predictionLabel');
             const confEl = document.getElementById('confidenceLevel');
+            const modelTypeEl = document.getElementById('modelTypeUsed');
             const confCircle = document.getElementById('confCircle');
             const bodyEl = document.getElementById('resultDashboard');
             const orbEl = document.getElementById('glowOrb');
+
+            if (modelTypeEl) {
+                modelTypeEl.textContent = modelType;
+            }
 
             if(err) {
                 labelEl.textContent = 'Gagal';

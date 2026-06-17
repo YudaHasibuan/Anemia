@@ -147,6 +147,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 else {
                     sessionStorage.setItem('prediction', data.prediction_label);
                     sessionStorage.setItem('confidence', data.confidence);
+                    sessionStorage.setItem('model_type', data.model_type || 'YOLOv11');
                 }
                 window.location.href = '/result';
             })

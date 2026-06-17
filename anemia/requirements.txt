@@ -4,3 +4,4 @@ numpy
 Werkzeug
 mediapipe
 tensorflow
+ultralytics
