@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Pemindai - Deteksi Anemia CNN</title>
+    <link rel="stylesheet" href="/static/css/style.css?v=6">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#f4f6f9">
+    <link rel="apple-touch-icon" href="/static/icons/icon-192x192.png">
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => { navigator.serviceWorker.register('/sw.js').catch(() => {}); });
+        }
+    </script>
+</head>
+<body>
+
+    <!-- TopNavBar -->
+    <nav class="navbar">
+        <a href="/" class="brand">
+            Deteksi <span>Anemia</span>
+        </a>
+        <div class="nav-links">
+            <a href="/">Beranda</a>
+            <a class="active" href="/detect">Pemindai</a>
+            <a href="/evaluation">Validasi Model</a>
+        </div>
+    </nav>
+
+    <main class="main-content container">
+        
+        <div class="grid grid-3-2">
+            
+            <!-- Left Panel (Controls & Info) -->
+            <div class="card">
+                <h2 style="margin-bottom: 15px;">Pilih Mode Deteksi</h2>
+                <p class="text-muted" style="font-size: 0.9rem; margin-bottom: 20px;">
+                    Gunakan kamera secara langsung atau unggah foto mata Anda untuk dianalisis oleh sistem Machine Learning kami.
+                </p>
+
+                <!-- Tab Switcher -->
+                <div class="tab-bar">
+                    <button id="tabCamera" class="tab-btn tab-active">Kamera Live</button>
+                    <button id="tabUpload" class="tab-btn">Upload Foto</button>
+                </div>
+
+                <!-- Instructions Camera -->
+                <div id="instrCamera" style="margin-bottom: 20px;">
+                    <h4 style="margin-bottom: 10px;">Petunjuk Pengambilan Kamera:</h4>
+                    <ol class="step-list">
+                        <li class="step-item">
+                            <span class="step-number">1</span>
+                            <span style="font-size: 0.9rem;">Pastikan wajah terpapar cahaya terang.</span>
+                        </li>
+                        <li class="step-item">
+                            <span class="step-number">2</span>
+                            <span style="font-size: 0.9rem;">Lepaskan kacamata, tatap kamera secara lurus.</span>
+                        </li>
+                        <li class="step-item">
+                            <span class="step-number">3</span>
+                            <span style="font-size: 0.9rem;">Tarik sedikit kelopak mata bagian bawah (konjungtiva) sebelum mengambil gambar.</span>
+                        </li>
+                    </ol>
+                </div>
+
+                <!-- Instructions Upload -->
+                <div id="instrUpload" class="hidden" style="margin-bottom: 20px;">
+                    <h4 style="margin-bottom: 10px;">Petunjuk Upload Foto:</h4>
+                    <ol class="step-list">
+                        <li class="step-item">
+                            <span class="step-number">1</span>
+                            <span style="font-size: 0.9rem;">Unggah foto wajah dekat atau close-up mata yang jelas.</span>
+                        </li>
+                        <li class="step-item">
+                            <span class="step-number">2</span>
+                            <span style="font-size: 0.9rem;">Format foto yang didukung: JPG, JPEG, PNG, WEBP.</span>
+                        </li>
+                        <li class="step-item">
+                            <span class="step-number">3</span>
+                            <span style="font-size: 0.9rem;">Pastikan pencahayaan pada mata terlihat jelas dan tidak buram.</span>
+                        </li>
+                    </ol>
+                </div>
+
+                <!-- Loading indicator -->
+                <div id="loading" class="hidden alert alert-info" style="margin-bottom: 20px;">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <span style="font-weight: bold;">MENGANALISIS CITRA MEDIS...</span>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div style="margin-top: 20px;">
+                    <button id="captureBtn" class="btn btn-primary btn-block">AMBIL FOTO &amp; DETEKSI</button>
+                    <button id="uploadBtn" class="btn btn-success btn-block hidden" disabled="true">MULAILAH DETEKSI SEKARANG</button>
+                </div>
+            </div>
+
+            <!-- Right Panel (Webcam or File Input View) -->
+            <div class="card" style="padding: 10px;">
+                
+                <!-- Camera View -->
+                <div id="panelCamera" class="w-full">
+                    <div class="scanner-container">
+                        <video id="webcam" autoplay playsinline></video>
+                        <canvas id="faceCanvas"></canvas>
+                        <div class="scan-line"></div>
+                        <div class="reticle"></div>
+                        
+                        <!-- Overlay Status Badges -->
+                        <div style="position: absolute; top: 10px; left: 10px; z-index: 15;">
+                            <span class="badge badge-danger">Live Stream</span>
+                        </div>
+                        
+                        <div id="faceStatus" style="position: absolute; top: 10px; right: 10px; z-index: 15; background-color: rgba(0,0,0,0.6); padding: 5px 10px; border-radius: 4px; display: flex; align-items: center; gap: 6px; color: #fff;">
+                            <span id="faceStatusDot" style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: #ffc107;"></span>
+                            <span id="faceStatusText" style="font-size: 0.75rem; font-weight: bold;">MENDETEKSI...</span>
+                        </div>
+                    </div>
+                    <canvas id="canvas" class="hidden"></canvas>
+                </div>
+
+                <!-- Upload File View -->
+                <div id="panelUpload" class="hidden w-full">
+                    <div id="dropZone" class="drop-zone">
+                        <img id="uploadPreview" class="hidden" alt="Preview foto" />
+                        <div id="uploadPlaceholder">
+                            <div style="font-size: 3.5rem; margin-bottom: 15px;">&#128193;</div>
+                            <h4 style="margin-bottom: 8px;">Tarik dan Lepaskan File Anda di Sini</h4>
+                            <p class="text-muted" style="font-size: 0.9rem;">Atau klik untuk memilih file dari komputer Anda</p>
+                            <div style="margin-top: 10px;">
+                                <span class="badge badge-secondary">PNG, JPG, JPEG, WEBP</span>
+                            </div>
+                        </div>
+                    </div>
+                    <input type="file" id="fileInput" accept="image/*" class="hidden">
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+    <script src="/static/js/camera.js"></script>
+    
+    <!-- OpenCV Face Detection Overlay via /detect_frame -->
+    <script>
+    window.addEventListener('load', function () {
+        const video    = document.getElementById('webcam');
+        const fc       = document.getElementById('faceCanvas');
+        const ctx      = fc.getContext('2d');
+        const statusEl = document.getElementById('faceStatusText');
+        const dotEl    = document.getElementById('faceStatusDot');
+        const tmpCvs   = document.createElement('canvas');
+        const tmpCtx   = tmpCvs.getContext('2d');
+
+        let busy   = false;
+        let loopId = null;
+
+        function pct(v, total) { return v / 100 * total; }
+
+        function setStatus(text, color) {
+            statusEl.textContent = text;
+            dotEl.style.backgroundColor = color;
+        }
+
+        function syncCanvas() {
+            if (video.videoWidth > 0 && fc.width !== video.videoWidth) {
+                fc.width  = video.videoWidth;
+                fc.height = video.videoHeight;
+            }
+        }
+
+        function drawResults(data) {
+            syncCanvas();
+            ctx.clearRect(0, 0, fc.width, fc.height);
+            const W = fc.width, H = fc.height;
+            if (!W || !H) return;
+
+            if (!data.detected) {
+                setStatus('WAJAH TIDAK TERDETEKSI', '#dc3545');
+                return;
+            }
+            setStatus('WAJAH TERDETEKSI', '#28a745');
+
+            // Draw Face bounds
+            data.faces.forEach(function(f) {
+                var x = pct(f.x, W), y = pct(f.y, H),
+                    w = pct(f.w, W), h = pct(f.h, H);
+                ctx.strokeStyle = '#17a2b8';
+                ctx.lineWidth   = 2;
+                ctx.strokeRect(x, y, w, h);
+                ctx.fillStyle   = '#17a2b8';
+                ctx.font        = 'bold 12px Arial';
+                ctx.fillText('WAJAH', x + 5, y - 5);
+            });
+
+            // Draw eyes + conjunctiva bounds
+            data.eyes.forEach(function(e) {
+                var x  = pct(e.x,  W), y  = pct(e.y,  H),
+                    w  = pct(e.w,  W), h  = pct(e.h,  H),
+                    cy = pct(e.cy, H), ch = pct(e.ch, H);
+
+                // Eye Box (Yellow)
+                ctx.strokeStyle = '#ffc107';
+                ctx.lineWidth   = 1.5;
+                ctx.strokeRect(x, y, w, h);
+
+                // Conjunctiva Area (Red)
+                ctx.fillStyle   = 'rgba(220,53,69,0.2)';
+                ctx.strokeStyle = '#dc3545';
+                ctx.lineWidth   = 2;
+                ctx.fillRect  (x, cy, w, ch);
+                ctx.strokeRect(x, cy, w, ch);
+
+                ctx.fillStyle = '#dc3545';
+                ctx.font      = 'bold 10px Arial';
+                ctx.fillText('KONJUNGTIVA', x + 2, cy - 3);
+
+                // Center pupil indicator
+                ctx.beginPath();
+                ctx.arc(x + w/2, y + h/2, 3, 0, 2*Math.PI);
+                ctx.fillStyle = '#ffffff';
+                ctx.fill();
+            });
+        }
+
+        async function sendFrame() {
+            if (busy || video.readyState < 2 || video.videoWidth === 0) return;
+            busy = true;
+            try {
+                tmpCvs.width  = video.videoWidth;
+                tmpCvs.height = video.videoHeight;
+                tmpCtx.drawImage(video, 0, 0);
+
+                var blob = await new Promise(function(res) { tmpCvs.toBlob(res, 'image/jpeg', 0.65); });
+                if (!blob) return;
+
+                var fd = new FormData();
+                fd.append('frame', blob, 'frame.jpg');
+
+                var resp = await fetch('/detect_frame', { method: 'POST', body: fd });
+                if (resp.ok) {
+                    var data = await resp.json();
+                    drawResults(data);
+                }
+            } catch(e) {
+                console.warn('[detect_frame]', e);
+            } finally {
+                busy = false;
+            }
+        }
+
+        function startLoop() {
+            if (!video.srcObject) { setTimeout(startLoop, 600); return; }
+            setStatus('MENDETEKSI...', '#6c757d');
+            loopId = setInterval(sendFrame, 150);
+        }
+
+        // Tab events
+        document.getElementById('tabUpload').addEventListener('click', function() {
+            if (loopId) { clearInterval(loopId); loopId = null; }
+            ctx.clearRect(0, 0, fc.width, fc.height);
+            setStatus('MODE UPLOAD', '#6c757d');
+        });
+        document.getElementById('tabCamera').addEventListener('click', function() {
+            if (!loopId) startLoop();
+        });
+
+        setTimeout(startLoop, 2000);
+    });
+    </script>
+</body>
+</html>

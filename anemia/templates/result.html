@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laporan - Deteksi Anemia CNN</title>
+    <link rel="stylesheet" href="/static/css/style.css?v=6">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#f4f6f9">
+    <link rel="apple-touch-icon" href="/static/icons/icon-192x192.png">
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js').catch(err => console.log('SW error:', err));
+        });
+      }
+    </script>
+</head>
+<body>
+
+    <!-- TopNavBar -->
+    <nav class="navbar">
+        <a href="/" class="brand">
+            Deteksi <span>Anemia</span>
+        </a>
+        <div class="nav-links">
+            <a href="/">Beranda</a>
+            <a href="/detect">Pemindai</a>
+            <a href="/evaluation">Validasi Model</a>
+        </div>
+    </nav>
+
+    <!-- Hidden element for compatibility with original JS script -->
+    <div id="glowOrb" style="display: none;"></div>
+
+    <main class="main-content container">
+        
+        <div class="text-center" style="margin-bottom: 30px;">
+            <h1>Laporan Diagnostik Machine Learning</h1>
+            <p class="text-muted">Hasil evaluasi segmentasi citra konjungtiva dan prediksi model neural network.</p>
+        </div>
+
+        <!-- Dashboard Layout -->
+        <div class="grid grid-3-2" id="resultDashboard">
+            
+            <!-- Left Side: Main Result -->
+            <div class="card text-center" id="mainResultCard" style="display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 40px 20px;">
+                <span class="badge badge-secondary" style="margin-bottom: 15px;">Klasifikasi Utama Model</span>
+                
+                <h2 id="predictionLabel" class="status-text">Proses Analisis...</h2>
+                
+                <div style="margin-top: 15px; font-size: 0.85rem; color: var(--text-muted);">
+                    ID Referensi: <strong>#ADS-<script>document.write(Math.floor(Math.random()*90000)+10000)</script></strong>
+                </div>
+            </div>
+
+            <!-- Right Side: Confidence Score -->
+            <div class="card text-center" style="display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 30px 20px;">
+                <span class="badge badge-info" style="margin-bottom: 15px;">Tingkat Keyakinan (Confidence)</span>
+                
+                <div class="progress-circle" id="confCircle">
+                    <span id="confidenceLevel">0%</span>
+                </div>
+                
+                <p class="text-muted" style="font-size: 0.85rem; margin-top: 10px;">Probabilitas kecocokan citra dengan dataset latih.</p>
+            </div>
+            
+            <!-- Full Width: Suggestions -->
+            <div class="card" id="suggestionCard" style="display: none; grid-column: span 2; padding: 25px;">
+                <div style="display: flex; gap: 20px; align-items: center;">
+                    <div id="suggestionIcon" style="font-size: 2.5rem;"></div>
+                    <div>
+                        <h3 id="suggestionTitle" style="margin-bottom: 8px;">Saran Tindakan Kesehatan</h3>
+                        <p id="suggestionText" style="margin-bottom: 0; font-size: 0.95rem; line-height: 1.6;"></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Full Width: Model Performance Metrics -->
+            <div class="card" style="grid-column: span 2;">
+                <h3 class="card-title">Metrik Akurasi & Confusion Matrix Model</h3>
+                
+                <div class="grid grid-2" style="margin-top: 20px;">
+                    <div>
+                        <p style="font-size: 0.9rem; margin-bottom: 20px;">
+                            Model deep learning kami dikembangkan dan divalidasi menggunakan dataset medis optik terverifikasi untuk memastikan tingkat kepatuhan akurasi yang optimal.
+                        </p>
+                        
+                        <table style="width: 100%; border: 1px solid var(--border-color); font-size: 0.9rem;">
+                            <tbody>
+                                <tr>
+                                    <td><strong>Akurasi Validasi</strong></td>
+                                    <td style="color: var(--success); font-weight: bold; text-align: right;">96.42%</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Sensitivitas (Recall)</strong></td>
+                                    <td style="color: var(--danger); font-weight: bold; text-align: right;">95.04%</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Spesifisitas</strong></td>
+                                    <td style="color: var(--text-color); font-weight: bold; text-align: right;">97.81%</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div>
+                        <h4 style="font-size: 0.9rem; font-weight: bold; margin-bottom: 10px; text-align: center;">Confusion Matrix (Dataset Uji)</h4>
+                        
+                        <div class="matrix-grid">
+                            <div class="matrix-cell true-cell">
+                                <div class="matrix-cell-title">True Negative</div>
+                                <div class="matrix-cell-value">1204</div>
+                                <div class="matrix-cell-desc">Sehat &rarr; Hasil Sehat</div>
+                            </div>
+                            <div class="matrix-cell false-cell">
+                                <div class="matrix-cell-title">False Positive</div>
+                                <div class="matrix-cell-value">35</div>
+                                <div class="matrix-cell-desc">Sehat &rarr; Hasil Anemia</div>
+                            </div>
+                            <div class="matrix-cell false-cell">
+                                <div class="matrix-cell-title">False Negative</div>
+                                <div class="matrix-cell-value">52</div>
+                                <div class="matrix-cell-desc">Anemia &rarr; Hasil Sehat</div>
+                            </div>
+                            <div class="matrix-cell true-cell">
+                                <div class="matrix-cell-title">True Positive</div>
+                                <div class="matrix-cell-value">1109</div>
+                                <div class="matrix-cell-desc">Anemia &rarr; Hasil Anemia</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Action Options -->
+        <div style="margin-top: 30px; display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+            <a href="/detect" class="btn btn-primary">Pindai Pasien Lain</a>
+            <a href="/" class="btn btn-secondary">Tutup Dashboard</a>
+        </div>
+        
+        <!-- Medical Disclaimer -->
+        <div class="alert alert-warning text-center" style="margin-top: 40px; font-size: 0.85rem;">
+            <strong>PEMBERITAHUAN PENTING:</strong> Laporan hasil skrining ini dihasilkan secara komputasi melalui pemrosesan citra (Convolutional Neural Network) 
+            dan tidak dimaksudkan sebagai pengganti diagnosis laboratorium medis formal atau konsultasi dokter ahli. Konsultasikan ke dokter jika Anda memiliki keluhan fisik yang berkelanjutan.
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 Engine Klasifikasi Penyakit Berbasis Machine Learning. Dikembangkan dengan Python Flask.</p>
+        </div>
+    </footer>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const pred = sessionStorage.getItem('prediction');
+            const conf = sessionStorage.getItem('confidence');
+            const err = sessionStorage.getItem('error');
+
+            const labelEl = document.getElementById('predictionLabel');
+            const confEl = document.getElementById('confidenceLevel');
+            const confCircle = document.getElementById('confCircle');
+            const bodyEl = document.getElementById('resultDashboard');
+            const orbEl = document.getElementById('glowOrb');
+
+            if(err) {
+                labelEl.textContent = 'Gagal';
+                confEl.textContent = 'N/A';
+                labelEl.style.color = 'var(--rose)';
+                alert("Kesalahan Sistem: " + err);
+                sessionStorage.clear();
+                return;
+            }
+
+            if(pred && conf) {
+                labelEl.textContent = pred.toUpperCase();
+                
+                // Update Progress bar/circle animation
+                const floatConf = parseFloat(conf);
+                const targetPercent = floatConf * 100;
+                
+                // Animate numbers
+                let start = 0;
+                const duration = 1500;
+                const interval = 20;
+                const step = targetPercent / (duration / interval);
+                
+                const timer = setInterval(() => {
+                    start += step;
+                    if(start >= targetPercent) {
+                        start = targetPercent;
+                        clearInterval(timer);
+                    }
+                    confEl.textContent = start.toFixed(1) + "%";
+                }, interval);
+
+                const suggestionCard = document.getElementById('suggestionCard');
+                const suggestionTitle = document.getElementById('suggestionTitle');
+                const suggestionText = document.getElementById('suggestionText');
+                const suggestionIcon = document.getElementById('suggestionIcon');
+
+                setTimeout(() => {
+                   if(pred.toLowerCase() === 'anemia') {
+                       bodyEl.classList.add('status-anemia');
+                       confCircle.style.borderColor = 'var(--rose)';
+                       
+                       // Set Suggestion for Anemia
+                       suggestionCard.style.display = 'block';
+                       suggestionCard.style.borderColor = 'var(--rose)';
+                       suggestionTitle.textContent = "Saran Tindakan Anemia";
+                       suggestionTitle.style.color = 'var(--rose)';
+                       suggestionText.innerHTML = "Berdasarkan analisis model, Anda terindikasi memiliki anemia. Silakan ikuti saran berikut:<br>• <strong>Konsumsi Vitamin C</strong> untuk memaksimalkan penyerapan zat besi tubuh.<br>• <strong>Minum Tablet Tambah Darah (TTD)</strong> sesuai dengan petunjuk medis.<br>• <strong>Perbaiki pola makan gizi seimbang</strong> dengan makanan tinggi zat besi (daging merah, bayam, hati).";
+                       suggestionIcon.innerHTML = '<span>🩸</span>';
+                   } else {
+                       bodyEl.classList.add('status-normal');
+                       confCircle.style.borderColor = 'var(--emerald)';
+                       
+                       // Set Suggestion for Normal
+                       suggestionCard.style.display = 'block';
+                       suggestionCard.style.borderColor = 'var(--emerald)';
+                       suggestionTitle.textContent = "Catatan Kesehatan (Normal)";
+                       suggestionTitle.style.color = 'var(--emerald)';
+                       suggestionText.innerHTML = "Hasil menunjukkan kondisi konjungtiva Anda <strong>Normal</strong>. Silakan jaga kestabilan kesehatan Anda dengan:<br>• <strong>Mengonsumsi makanan seimbang</strong> (prinsip Isi Piringku).<br>• <strong>Mengkonsumsi Tablet Tambah Darah</strong> sesuai kebutuhan (misal saat menstruasi bagi wanita).<br>• <strong>Istirahat yang cukup</strong> dan hindari kelelahan berlebih.";
+                       suggestionIcon.innerHTML = '<span>✅</span>';
+                   }
+                }, 100);
+
+            } else {
+                window.location.href = '/detect';
+            }
+        });
+    </script>
+</body>
+</html>

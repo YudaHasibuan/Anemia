@@ -1,0 +1,26 @@
+# Virtual environment
+venv/
+ENV/
+env/
+
+# Python cache files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# IDE and Editor configurations
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+
+# Model files larger than 100MB (GitHub limit)
+anemia_cnn_model.h5
+anemia_detection_model.h5
+
+# Local system files / logs
+anemia/static/images/temp/*
+!anemia/static/images/temp/.gitkeep

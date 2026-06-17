@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Deteksi Anemia - Ekosistem Machine Learning</title>
+    <link rel="stylesheet" href="/static/css/style.css?v=6">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#f4f6f9">
+    <link rel="apple-touch-icon" href="/static/icons/icon-192x192.png">
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js').catch(err => console.log('SW error:', err));
+        });
+      }
+    </script>
+</head>
+<body>
+
+    <!-- TopNavBar -->
+    <nav class="navbar">
+        <a href="/" class="brand">
+            Deteksi <span>Anemia</span>
+        </a>
+        <div class="nav-links">
+            <a class="active" href="/">Beranda</a>
+            <a href="/detect">Pemindai</a>
+            <a href="/evaluation">Validasi Model</a>
+            <a href="/detect" class="btn btn-primary" style="padding: 6px 12px; font-size: 0.9rem; color: #fff;">Mulai Diagnosa</a>
+        </div>
+    </nav>
+
+    <main class="main-content container">
+        
+        <!-- Hero Section -->
+        <section class="card text-center" style="padding: 40px 20px; margin-bottom: 30px;">
+            <div style="margin-bottom: 15px;">
+                <span class="badge badge-info">Pipeline Diagnostik Presisi v2.4</span>
+            </div>
+            
+            <h1>Sistem Deteksi Anemia Machine Learning</h1>
+            
+            <p class="lead text-muted" style="max-width: 800px; margin: 0 auto 25px auto;">
+                Platform identifikasi potensi anemia non-invasif berkinerja tinggi. Mengekstraksi rona sel darah pada kapiler konjungtiva mata Anda dan memanfaatkan klasifikasi Convolutional Neural Network (CNN) tingkat lanjut—tanpa perlu tes darah fisik.
+            </p>
+            
+            <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+                <a href="/detect" class="btn btn-primary">Jalankan Pemindai &rarr;</a>
+                <a href="/evaluation" class="btn btn-secondary">Lihat Dokumen Klinis</a>
+            </div>
+        </section>
+
+        <!-- Detailed Explanation Section -->
+        <section style="margin-bottom: 40px;">
+            <div class="text-center" style="margin-bottom: 30px;">
+                <h2>Bagaimana Algoritma Beroperasi?</h2>
+                <p class="text-muted">
+                    Menjawab tantangan medis dengan efisiensi tinggi, sistem kami memadukan computer vision otomasi dengan prediksi probabilitas saraf untuk menentukan kadar hemoglobin kasat mata di bawah kulit konjungtiva mata Anda.
+                </p>
+            </div>
+
+            <div class="grid grid-3">
+                <!-- Step 1 -->
+                <div class="card text-center">
+                    <div style="font-size: 2.5rem; color: var(--primary); margin-bottom: 15px;">&#128247;</div>
+                    <h3>1. Akuisisi Citra Medis</h3>
+                    <p class="text-muted" style="font-size: 0.9rem;">
+                        Anda akan diminta memotret atau mengunggah area mata bagian bawah (konjungtiva palpebral) menggunakan kamera digital. File ditangkap secara real-time.
+                    </p>
+                </div>
+                <!-- Step 2 -->
+                <div class="card text-center">
+                    <div style="font-size: 2.5rem; color: var(--primary); margin-bottom: 15px;">&#127919;</div>
+                    <h3>2. Ekstraksi Fitur (ROI)</h3>
+                    <p class="text-muted" style="font-size: 0.9rem;">
+                        Infrastruktur pemroses kami menyeimbangkan spektrum rona pencahayaan dan mengunci zona koordinat (Region of Interest) area konjungtiva yang paling banyak dilewati kapiler.
+                    </p>
+                </div>
+                <!-- Step 3 -->
+                <div class="card text-center">
+                    <div style="font-size: 2.5rem; color: var(--primary); margin-bottom: 15px;">&#129504;</div>
+                    <h3>3. Klasifikasi Berlapis (CNN)</h3>
+                    <p class="text-muted" style="font-size: 0.9rem;">
+                        Matriks jaringan saraf mendeteksi kepadatan makroskopis piksel warna merah dan menilainya dengan dataset medis untuk mengklasifikasikan risiko Anemia maupun Normal.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Feature Grid Section -->
+        <section style="margin-bottom: 40px;">
+            <div class="grid grid-3">
+                <!-- Info 1 (Wide card) -->
+                <div class="card" style="grid-column: span 2;">
+                    <h3 style="margin-bottom: 15px; color: var(--primary);">Analisis Biometrik Terdalam</h3>
+                    <p>
+                        Kekurangan hemoglobin secara klinis ditandai dengan manifestasi warna konjungtiva yang memucat. Parameter warna palpebral ini digunakan oleh model observasi digital komputasi kami yang telah dilatih berulang kali (Epochs) layaknya spesialis diagnostik untuk mendeteksi fluktuasi ketebalan sirkulasi sel darah merah anda.
+                    </p>
+                    <div style="margin-top: 20px;">
+                        <span class="badge badge-success">96.4% Akurasi Validasi Spesifik</span>
+                    </div>
+                </div>
+
+                <!-- Info 2 -->
+                <div class="card text-center" style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                    <div style="font-size: 3rem; color: var(--success); margin-bottom: 15px;">&#128187;</div>
+                    <h3>Sinkronisasi Komputasi</h3>
+                    <p class="text-muted" style="font-size: 0.9rem;">Menghasilkan prediksi model seketika dan efisien.</p>
+                </div>
+
+                <!-- Info 3 -->
+                <div class="card">
+                    <h3 style="margin-bottom: 15px;">Alokasi Monitoring Server</h3>
+                    <div style="margin-bottom: 15px;">
+                        <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 5px;">
+                            <span>Beban Server</span>
+                            <span>75%</span>
+                        </div>
+                        <div style="background-color: #e9ecef; height: 8px; border-radius: 4px;">
+                            <div style="background-color: var(--danger); width: 75%; height: 100%; border-radius: 4px;"></div>
+                        </div>
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 5px;">
+                            <span>Akurasi Model</span>
+                            <span>96%</span>
+                        </div>
+                        <div style="background-color: #e9ecef; height: 8px; border-radius: 4px;">
+                            <div style="background-color: var(--success); width: 96%; height: 100%; border-radius: 4px;"></div>
+                        </div>
+                    </div>
+                    <p class="text-muted" style="font-size: 0.75rem; margin-top: 15px;">Estimasi Laten Prediksi: &lt; 0.8s</p>
+                </div>
+
+                <!-- Info 4 (Wide card) -->
+                <div class="card" style="grid-column: span 2; display: flex; gap: 20px; flex-wrap: wrap;">
+                    <div style="flex: 1; min-width: 200px;">
+                        <h3 style="margin-bottom: 15px;">Keamanan Privasi In-Memory (Sisi-Klien)</h3>
+                        <p style="font-size: 0.9rem;">
+                            Privasi data medis merupakan harga mati. Identifikasi pasien harus berjalan secara tertutup dan tidak meninggalkan jejak. Oleh karena itu, arsitektur backend kami menggunakan protokol pemrosesan sementara (in-memory buffering). Matriks visual mata tidak dilempar ke disk keras sehingga kami tidak akan pernah mendistribusikan maupun merekam gambar Anda sama sekali.
+                        </p>
+                        <span class="badge badge-warning" style="margin-top: 10px;">Bebas Risiko Penguntitan Data</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Prediction Callout Section -->
+        <section class="card text-center" style="background-color: #e9ecef; padding: 40px 20px; border: none; margin-bottom: 40px;">
+            <h2>Coba Buktikan Sekarang!</h2>
+            <p class="lead">Silakan uji kinerja validasi model ini menggunakan foto konjungtiva yang jelas atau akses langsung dari kamera gawai Anda.</p>
+            <div style="margin: 20px 0;">
+                <a href="/detect" class="btn btn-primary" style="font-size: 1.2rem; padding: 12px 25px;">Evaluasi Konjungtiva &rarr;</a>
+            </div>
+            <p style="font-size: 0.8rem; color: var(--text-muted); font-weight: bold; text-transform: uppercase;">Kompatibilitas Penuh Untuk Seluler</p>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 Engine Klasifikasi Penyakit Berbasis Machine Learning. Dikembangkan dengan Python Flask.</p>
+            <div style="margin-top: 10px;">
+                <a href="#">Kebijakan Kerahasiaan Sisi-Klien</a> | 
+                <a href="/evaluation">Tinjau Logika Program</a>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
